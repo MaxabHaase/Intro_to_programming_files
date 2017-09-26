@@ -49,8 +49,8 @@ while hold:
             exit()
     #print(sequences)
         ###  Reverse complement the sequence  ###
-    reverse_complement = {}
-    trans = str.maketrans('ATGCatgc', 'TACGtacg')
+reverse_complement = {}
+trans = str.maketrans('ATGCatgc', 'TACGtacg')
 for key, seq_rc in sequences.items():
     reverse_complement[key] = reverse_complement.get(key, '') + seq_rc.translate(trans)[::-1]
 for ID, Seq_f in reverse_complement.items():
