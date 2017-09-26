@@ -51,7 +51,7 @@ def fasta_file(file):
 # Define a function to take 'n' number of sequence entries from the user.
 
 def manual_entry():
-    number_seq = int(input('Enter the number of sequences you want to reverse complement'))  # How many sequences
+    number_seq = int(input('Enter the number of sequences you want to reverse complement: '))  # How many sequences
     key_me = 0                                      # Set a Key value for sequences to 0
     for seq_count in range(1, number_seq + 1):      # Set number of iterations to go through, how many seq. to ask for
         key_me += 1                                 # Adds +1 to the Key value for each new sequence.
@@ -71,7 +71,7 @@ def manual_entry():
 # not present then the program exits. If it is present we call the fasta_file function and parse out the sequences.
 
 while file_in:
-    usr = input('Would you like to enter your sequences manually, Y/N?')
+    usr = input('Would you like to enter your sequences manually, Y/N? ')
     if usr == 'Y':
         manual_entry()
         file_in = False
@@ -94,8 +94,8 @@ for key, value in sequences.items():            # Get the Key and value for each
         duplicated_seq.setdefault(value, set()).add(key) # swap the value to be the key and the key to be the value
     else:                                       # If the value is present in the duplicated_seq dict, then prompt user
         while hold:                             # Holds the program until the user decides to exit or continue
-            print("There are duplicated DNA sequences")
-            Hold = input('Continue with the program, Y/N?')
+            print("There are duplicated DNA sequences, Sequence:%s," % key)
+            Hold = input('Continue with the program, Y/N? ')
             if Hold == 'Y':
                 hold = False
             else:
@@ -114,9 +114,9 @@ for key, seq_rc in sequences.items():
 ########################################################################################################
 
 # The last step is to print out the results of the reverse complement for loop. It simply prints the header and then
-# the value. Next it calculates the %GC content and the length of the sequence.
+# the value. Next it calculates the %GC content and the length of each sequence.
 for ID, Seq_f in reverse_complement.items():
-    print('\n', ID, '\n', Seq_f)
+    print('\n>', ID, '\n', Seq_f)
     GC_seq = 0
     length_seq = 0
     percent_GC = 0
@@ -125,4 +125,5 @@ for ID, Seq_f in reverse_complement.items():
             GC_seq += 1
     percent_GC = 100 * (GC_seq/len(Seq_f))
     length_seq = len(Seq_f)
-    print('Some statistics: \n', '\tGC content: ', round(percent_GC, 2),'%GC\n', '\tSequence length: ', '%d bases' % length_seq)
+    print('Some statistics: \n', '\tGC content: ', round(percent_GC, 2),'%GC\n', '\tSequence length: ', '%d bases'
+          % length_seq)
