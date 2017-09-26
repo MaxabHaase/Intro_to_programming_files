@@ -40,10 +40,10 @@ while New_game:  # while loop contains game, will continue to loop while New_gam
             Score_p2 += 0
     print('Player one score:', Score_p1,'\n''Player two score:', Score_p2)  # prints the the current score
     NG = input('Play again? (Y/N)\n')  # ask the user if they would like to keep playing
-    if NG == 'N':  # if the don't want to play it update New_game to False and quits
+    if NG == 'N':  # if they don't want to play it update New_game to False and quits
         New_game = False
         print('Final scores:','\n''Player one score:', Score_p1, '\n''Player two score:', Score_p2)  # prints the final
-        # score and declares the winner
+        # score and de4clares the winner
         if Score_p1 > Score_p2:
             print('Player one is victorious!')
         else:
