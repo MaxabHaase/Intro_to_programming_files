@@ -39,6 +39,7 @@ def fasta_file(file):
         for sites in seq:                   # Test to see seq line only contains acceptable DNA letters
             if sites not in ok_dna:
                 print('File contains non-DNA (AGTC) strings! Closing the program!')
+                #break
                 exit()
             else:
                 continue
@@ -51,7 +52,7 @@ def fasta_file(file):
 # Define a function to take 'n' number of sequence entries from the user.
 
 def manual_entry():
-    number_seq = int(input('Enter the number of sequences you want to reverse complement: '))  # How many sequences
+    number_seq = int(input('Enter the number of sequences to reverse complement: '))  # How many sequences
     key_me = 0                                      # Set a Key value for sequences to 0
     for seq_count in range(1, number_seq + 1):      # Set number of iterations to go through, how many seq. to ask for
         key_me += 1                                 # Adds +1 to the Key value for each new sequence.
@@ -72,10 +73,10 @@ def manual_entry():
 
 while file_in:
     usr = input('Would you like to enter your sequences manually, Y/N? ')
-    if usr == 'Y':
+    if usr in 'Yy':
         manual_entry()
         file_in = False
-    else:
+    elif usr in 'Nn':
         File_name = input("Enter the FASTA file name:  ")
         try:
             file = open(File_name)
@@ -84,6 +85,10 @@ while file_in:
             print("file cannot be opened", File_name)
             exit()
         sequences = fasta_file(file)
+    elif usr not in 'YyNn':
+        pass
+    else:
+        break
 
 ########################################################################################################
 
@@ -91,7 +96,8 @@ while file_in:
 # it prompts the user is they'd like to continue.
 for key, value in sequences.items():            # Get the Key and value for each item in the dictionary
     if value not in duplicated_seq:             # if the value is not in the duplicated_seq dictionary then go ahead.
-        duplicated_seq.setdefault(value, set()).add(key) # swap the value to be the key and the key to be the value
+        duplicated_seq[value] = duplicated_seq.get(value, '') # swap the value to be the key and the key to be the value
+        #duplicated_seq.setdefault(value, set()).add(key)
     else:                                       # If the value is present in the duplicated_seq dict, then prompt user
         while hold:                             # Holds the program until the user decides to exit or continue
             print("There are duplicated DNA sequences, Sequence:%s," % key)
