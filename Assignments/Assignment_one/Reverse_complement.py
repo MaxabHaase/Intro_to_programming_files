@@ -11,11 +11,12 @@ file_in = True
 hold = True
 duplicated_seq = {}
 reverse_complement = {}
-sequences = {}                                  # where we will store the output of the file reader loop
+sequences = {}  # where we will store the output of the file reader loop
 header = ''
 seq = ''
-ok_dna = ['a','A','t','T','g','G','c','C']      # Strings acceptable as a input
-trans = str.maketrans('ATGCatgc', 'TACGtacg')   # The translation table between forward and reverse compliment strand.
+ok_dna = ['a', 'A', 't', 'T', 'g', 'G', 'c', 'C']  # Strings acceptable as a input
+trans = str.maketrans('ATGCatgc', 'TACGtacg')  # The translation table between forward and reverse compliment strand.
+
 
 ########################################################################################################
 
@@ -24,61 +25,68 @@ trans = str.maketrans('ATGCatgc', 'TACGtacg')   # The translation table between 
 # Sequences are pulled from the file one line at a time.
 
 def fasta_file(file):
-    for line in file:                       # Iterate through all lines of the fasta file and get headers and sequences
-        if line.startswith('>'):            # This tests if the line starts with '>'. If so it is a new sequence.
+    for line in file:  # Iterate through all lines of the fasta file and get headers and sequences
+        if line.startswith('>'):  # This tests if the line starts with '>'. If so it is a new sequence.
             header = ''
-            header += line.rstrip()         # Store the > line as a header, will be used as a key
+            header += line.rstrip()  # Store the > line as a header, will be used as a key
             if header in sequences.keys():  # Check if header is duplicated, if it is exit
                 print('File contains a duplicate header! Closing the program!', '\nProblematic header: ', header)
                 print('Exiting program...')
                 exit()
-            seq = ''                        # If you start a new header, reset the stored seq to a empty value
-        else:                               # If the line is not a header, store it in the seq variable
+            seq = ''  # If you start a new header, reset the stored seq to a empty value
+        else:  # If the line is not a header, store it in the seq variable
             seq = ''
             seq += line.rstrip()
-        for sites in seq:                   # Test to see seq line only contains acceptable DNA letters
+        for sites in seq:  # Test to see seq line only contains acceptable DNA letters
             if sites not in ok_dna:
                 print('File contains non-DNA (AGTC) strings! Closing the program!')
-                #break
+                # break
                 exit()
             else:
                 continue
-        else:                               # If all checks are good, add the header to the key and the seq to the value
+        else:  # If all checks are good, add the header to the key and the seq to the value
             sequences[header] = sequences.get(header, '') + seq
     return sequences
+
 
 ########################################################################################################
 
 # Define a function to take 'n' number of sequence entries from the user.
 
 def manual_entry():
-    number_seq = int(input('Enter the number of sequences to reverse complement: '))  # How many sequences
-    key_me = 0                                      # Set a Key value for sequences to 0
+    while True:
+        try:
+            number_seq = int(input('Enter the number of sequences to reverse complement: '))  # How many sequences
+            break
+        except:
+            print("\nPlease enter a number.\n")
+    key_me = 0  # Set a Key value for sequences to 0
     bad_dna = 0
     invalid_chr = ''
     ask = True
     while ask:
-        for seq_count in range(1, number_seq + 1):      # Set number of iterations to go through, how many seq. to ask for
-            key_me += 1                                 # Adds +1 to the Key value for each new sequence.
+        while key_me < number_seq:
+            key_me += 1  # Adds +1 to the Key value for each new sequence.
             sequence_n = input('Paste in sequence %d: ' % key_me)
             temp_seq = ''
-            for sites in sequence_n:                    # Test to se seq line only contains DNA letters
+            for sites in sequence_n:  # Test to se seq line only contains DNA letters
                 temp_seq += sites
-                if sites not in ok_dna:                 # Checks if sequences has only acceptable characters
-                   bad_dna += 1
-                   invalid_chr += ''
+                if sites not in ok_dna:  # Checks if sequences has only acceptable characters
+                    bad_dna += 1
+                    invalid_chr += sites
                 if len(temp_seq) == len(sequence_n):
                     if bad_dna >= 1:
                         bad_dna = 0
                         temp_seq = ''
-                        print('Sequence {} contains non-DNA strings: {}'.format(key_me, invalid_chr))
+                        print('Sequence {} contains the non-DNA string(s): {}'.format(key_me, invalid_chr))
                         invalid_chr = ''
                         key_me = key_me - 1
                     else:
                         sequences[key_me] = sequences.get(key_me,
-                                                          '') + sequence_n  # Append the Key and sequence to the dictionary
+                                                          '') + sequence_n  # Append the Key and sequence to the dict
             ask = False
     return sequences
+
 
 ########################################################################################################
 
@@ -110,19 +118,20 @@ while file_in:
 
 # This for loop checks if any sequences (values) in the sequence dictionary are duplicated. If they are duplicated then
 # it prompts the user is they'd like to continue.
-for key, value in sequences.items():            # Get the Key and value for each item in the dictionary
-    if value not in duplicated_seq:             # if the value is not in the duplicated_seq dictionary then go ahead.
-        duplicated_seq[value] = duplicated_seq.get(value, '') # swap the value to be the key and the key to be the value
-        #duplicated_seq.setdefault(value, set()).add(key)
-    else:                                       # If the value is present in the duplicated_seq dict, then prompt user
-        while hold:                             # Holds the program until the user decides to exit or continue
+for key, value in sequences.items():  # Get the Key and value for each item in the dictionary
+    if value not in duplicated_seq:  # if the value is not in the duplicated_seq dictionary then go ahead.
+        duplicated_seq[value] = duplicated_seq.get(value,
+                                                   '')  # swap the value to be the key and the key to be the value
+        # duplicated_seq.setdefault(value, set()).add(key)
+    else:  # If the value is present in the duplicated_seq dict, then prompt user
+        while hold:  # Holds the program until the user decides to exit or continue
             print("There are duplicated DNA sequences, Sequence:%s," % key)
             Hold = input('Continue with the program, Y/N? ')
             if Hold == 'Y':
                 hold = False
             else:
                 exit()
-        ###  Reverse complement the sequence  ###
+                ###  Reverse complement the sequence  ###
 
 ########################################################################################################
 
@@ -146,9 +155,9 @@ for ID, Seq_f in reverse_complement.items():
     length_seq = 0
     percent_GC = 0
     for base in Seq_f:
-        if base in ['g','G','c', 'C']:
+        if base in ['g', 'G', 'c', 'C']:
             GC_seq += 1
-    percent_GC = 100 * (GC_seq/len(Seq_f))
+    percent_GC = 100 * (GC_seq / len(Seq_f))
     length_seq = len(Seq_f)
-    print('Some statistics: \n', '\tGC content: ', round(percent_GC, 2),'%GC\n', '\tSequence length: ', '%d bases'
+    print('Some statistics: \n', '\tGC content: ', round(percent_GC, 2), '%GC\n', '\tSequence length: ', '%d bases'
           % length_seq)
