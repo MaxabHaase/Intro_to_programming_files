@@ -137,6 +137,9 @@ for key, seq_rc in sequences.items():
 
 # The last step is to print out the results of the reverse complement for loop. It simply prints the header and then
 # the value. Next it calculates the %GC content and the length of each sequence.
+seq_list = list(reverse_complement.values())
+print('\nSequences:', seq_list)
+
 for ID, Seq_f in reverse_complement.items():
     print('\n>', ID, '\n', Seq_f)
     GC_seq = 0
