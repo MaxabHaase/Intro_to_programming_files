@@ -54,14 +54,30 @@ def fasta_file(file):
 def manual_entry():
     number_seq = int(input('Enter the number of sequences to reverse complement: '))  # How many sequences
     key_me = 0                                      # Set a Key value for sequences to 0
-    for seq_count in range(1, number_seq + 1):      # Set number of iterations to go through, how many seq. to ask for
-        key_me += 1                                 # Adds +1 to the Key value for each new sequence.
-        sequence_n = input('Paste in sequence %d: ' % key_me)
-        for sites in sequence_n:                    # Test to se seq line only contains DNA letters
-            if sites not in ok_dna:                 # Checks if sequences has only acceptable characters
-                print('Sequence %d contains non-DNA (AGTC) strings! Closing the program!' % key_me)
-                exit()
-        sequences[key_me] = sequences.get(key_me, '') + sequence_n  # Append the Key and sequence to the dictionary
+    bad_dna = 0
+    invalid_chr = ''
+    ask = True
+    while ask:
+        for seq_count in range(1, number_seq + 1):      # Set number of iterations to go through, how many seq. to ask for
+            key_me += 1                                 # Adds +1 to the Key value for each new sequence.
+            sequence_n = input('Paste in sequence %d: ' % key_me)
+            temp_seq = ''
+            for sites in sequence_n:                    # Test to se seq line only contains DNA letters
+                temp_seq += sites
+                if sites not in ok_dna:                 # Checks if sequences has only acceptable characters
+                   bad_dna += 1
+                   invalid_chr += ''
+                if len(temp_seq) == len(sequence_n):
+                    if bad_dna >= 1:
+                        bad_dna = 0
+                        temp_seq = ''
+                        print('Sequence {} contains non-DNA strings: {}'.format(key_me, invalid_chr))
+                        invalid_chr = ''
+                        key_me = key_me - 1
+                    else:
+                        sequences[key_me] = sequences.get(key_me,
+                                                          '') + sequence_n  # Append the Key and sequence to the dictionary
+            ask = False
     return sequences
 
 ########################################################################################################
