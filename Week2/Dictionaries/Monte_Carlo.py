@@ -1,6 +1,6 @@
 from numpy import random
 
-uniform = random.uniform
+uniform = random.random
 numSamples = 100000
 numInside = 0
 
