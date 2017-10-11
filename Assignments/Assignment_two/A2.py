@@ -55,9 +55,11 @@ def most_common(dict_a):
                                                                                      most_freq_taxa, previous_freq))
 
 fh = open('cleaned_GPMDB_table.tsv', 'r')
+print('Program is running...')
 list_of_dicts = map(get_items, fh.readlines()[1:])
 filtered_dictionary_list = filter(filter_, list_of_dicts)
 counted_taxa = reduce(year_count, filtered_dictionary_list, {})
 most_common(counted_taxa)
+fh.close()
 
 
