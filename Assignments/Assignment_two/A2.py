@@ -7,7 +7,6 @@
 
 from datetime import datetime
 from functools import reduce
-from collections import defaultdict
 
 def get_items(string_line):
     header = ['date', 'taxon', 'mcp']
@@ -15,6 +14,11 @@ def get_items(string_line):
     tmp_ = list((tmp[1], tmp[22], tmp[6]))
     taxon = tmp_[1].strip().split(',')
     if len(taxon) > 1:
+        taxon_ = []
+        for taxa in taxon:
+            taxon_.append(taxa.strip())
+        tmp_[1] = taxon_
+    if len(taxon) == 1:
         tmp_[1] = taxon
     tmp_ = list(tmp_)
     date = str(datetime.strptime(tmp_[0], '%Y:%m:%d:%H:%M:%S'))[:4]
@@ -32,17 +36,28 @@ def filter_(dictionary):
         return dictionary
 
 
-def year_count(empty, dictionary):
-    # check if date in dict
-    # if not make empty dict for that date
-    # for each taxa if it is in dict for the date increment + 1, else add
-    
-    return empty
+def year_count(dict_b, dict_a):
+    if dict_a['date'] not in dict_b:
+        dict_b[dict_a['date']] = dict_b.get(dict_a['date'], {})
+    for taxa in dict_a['taxon']:
+        dict_b[dict_a['date']][taxa] = dict_b[dict_a['date']].get(taxa, 0) + 1
+    return dict_b
 
 
-fh = open('cleaned_GPMDB_table_test.tsv', 'r')
+def most_common(dict_a):
+    for year, info in dict_a.items():
+        previous_freq = 0
+        for taxa, freq in info.items():
+            if freq > previous_freq:
+                previous_freq = freq
+                most_freq_taxa = taxa
+        print('The most common species in {} was {}, which appeared {} times'.format(year,
+                                                                                     most_freq_taxa, previous_freq))
+
+fh = open('cleaned_GPMDB_table.tsv', 'r')
 list_of_dicts = map(get_items, fh.readlines()[1:])
 filtered_dictionary_list = filter(filter_, list_of_dicts)
-print(list(filtered_dictionary_list))
-reduced_dict = reduce(year_count, filtered_dictionary_list, {})
-print(reduced_dict)
+counted_taxa = reduce(year_count, filtered_dictionary_list, {})
+most_common(counted_taxa)
+
+
